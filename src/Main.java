@@ -1,12 +1,15 @@
 import Figures.GraphicResources;
 import Figures.Pixel;
+import Tools.Proyection;
 
 import java.awt.*;
 
 public class Main {
     public static void main(String[] args) {
-        GraphicResources graphicResources = new GraphicResources();
-        graphicResources.LineDDA(38, 48, 120, 140, Color.RED);
+        Pixel pixel = new Pixel();
+        GraphicResources resources = new GraphicResources(pixel);
+        Proyection paralelProyection = new Proyection();
 
+        resources.drawCube(100, 100, 50, Color.RED);
     }
 }

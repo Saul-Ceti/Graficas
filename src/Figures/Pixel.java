@@ -6,20 +6,36 @@ import java.awt.image.BufferedImage;
 
 public class Pixel extends JFrame {
     private BufferedImage buffer;
-    private Graphics graPixel;
+    private Graphics2D canvas;
 
     public Pixel() {
-        setTitle("Figures.Pixel");
-        setSize(500, 500);
+        setTitle("Recursos gráficos");
+        setSize(800, 800);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(null);
-        buffer = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
-        graPixel = (Graphics2D) buffer.getGraphics();
+        buffer = new BufferedImage(800, 800, BufferedImage.TYPE_INT_ARGB);
+        canvas = buffer.createGraphics();
+        canvas.setColor(Color.WHITE);
+        canvas.fillRect(0, 0, 800, 800);
         setVisible(true);
     }
 
-    // Pintar un pixel en la pantalla
-    public void PutPixel(int x, int y, Color a){
-        buffer.setRGB(0, 0, a.getRGB());
-        getGraphics().drawImage(buffer, x, y, this);
+    public void putPixel(int x, int y, Color color) {
+        buffer.setRGB(x, y, color.getRGB());
+        repaint();
+    }
+
+    @Override
+    public void paint(Graphics g) {
+        super.paint(g);
+        g.drawImage(buffer, 0, 0, this);
+    }
+
+    public Graphics2D getCanvas() {
+        return canvas;
+    }
+
+    public Color getPixelColor(int x, int y) {
+        return new Color(buffer.getRGB(x, y));
     }
 }
