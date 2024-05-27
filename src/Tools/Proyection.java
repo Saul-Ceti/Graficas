@@ -1,15 +1,21 @@
 package Tools;
 
-import Figures.GraphicResources;
-import Figures.Pixel;
-
-import java.awt.*;
-
 public class Proyection {
-    public int[] paralelProyection(int x, int y, int z, int depth) {
-        int x2 = (x - (x/depth)*x);
-        int y2 = (y - (y/depth)*y);
+    public int[] paralela(int x, int y, int z) {
+        return new int[]{x, y};
+    }
 
-        return new int[]{x2, y2};
+    public int[] oblicua(int x, int y, int z) {
+        double theta = Math.toRadians(45);
+        double k = 0.5;
+
+        int xProyectado = (int) (x + k * z * Math.cos(theta));
+        int yProyectado = (int) (y + k * z * Math.sin(theta));
+
+        return new int[]{xProyectado, yProyectado};
+    }
+
+    public int[] ortogonal(int x, int y, int z) {
+        return new int[]{x, y};
     }
 }

@@ -10,6 +10,42 @@ public class Main {
         GraphicResources resources = new GraphicResources(pixel);
         Proyection paralelProyection = new Proyection();
 
-        resources.drawCube(100, 100, 50, Color.RED);
+        // Dibujar un cubo, esté será con proyección paralela
+        int[][] coordenadasCubo = {
+                // Forma (x, y, z)
+                // Cara frontal del cubo
+                {0, 0, 0},
+                {50, 0, 0},
+                {50, 50, 0},
+                {0, 50, 0},
+                // Cara trasera del cubo
+                {0, 0, -50},
+                {50, 0, -50},
+                {50, 50, -50},
+                {0, 50, -50}
+        };
+
+        int[][] coordenadasT = {
+                // Cara frontal de la T
+                {50, 0, 0},
+                {100,0, 0},
+                {100, 50, 0},
+                {150, 50, 0},
+                {150, 100, 0},
+                {100, 100, 0},
+                {100, 150, 0},
+                {50, 150, 0},
+                // Cara trasera de la T
+                {50, 0, -50},
+                {100,0, -50},
+                {100, 50, -50},
+                {150, 50, -50},
+                {150, 100, -50},
+                {100, 100, -50},
+                {100, 150, -50},
+                {50, 150, -50}
+        };
+
+        resources.poligono3D(coordenadasT, Color.RED);
     }
 }

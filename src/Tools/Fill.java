@@ -33,4 +33,10 @@ public class Fill {
             }
         }
     }
+
+    public void floodPolygon(int[] x, int[] y, Color targetColor, Color replacementColor) {
+        for (int i = 0; i < x.length; i++) {
+            floodFill(x[i], y[i], targetColor, replacementColor);
+        }
+    }
 }

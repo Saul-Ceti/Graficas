@@ -8,8 +8,11 @@ import java.awt.Color;
 public class GraphicResources {
     private Pixel pixel;
     private Fill fill;
-    private Proyection proyection;
+    final Proyection proyection;
+    private int centerX = 400;
+    private int centerY = 400;
 
+    // Constructor
     public GraphicResources(Pixel pixel) {
         this.pixel = pixel;
         this.fill = new Fill(pixel);
@@ -18,17 +21,19 @@ public class GraphicResources {
 
     // Linea usando el algoritmo de Bresenham
     public void linea(int x1, int y1, int x2, int y2, Color color) {
-        int dx = Math.abs(x2 - x1);
-        int dy = Math.abs(y2 - y1);
-        int sx = x1 < x2 ? 1 : -1;
-        int sy = y1 < y2 ? 1 : -1;
+        int[] coordenadas = centroCartesiano(x1, x2, y1, y2);
+
+        int dx = Math.abs(coordenadas[1] - coordenadas[0]);
+        int dy = Math.abs(coordenadas[3] - coordenadas[2]);
+        int sx = coordenadas[0] < coordenadas[1] ? 1 : -1;
+        int sy = coordenadas[2] < coordenadas[3] ? 1 : -1;
         int err = dx - dy;
         int e2;
 
         while (true) {
-            pixel.putPixel(x1, y1, color);
+            pixel.putPixel(coordenadas[0], coordenadas[2], color);
 
-            if (x1 == x2 && y1 == y2) {
+            if (coordenadas[0] == coordenadas[1] && coordenadas[2] == coordenadas[3]) {
                 break;
             }
 
@@ -36,46 +41,131 @@ public class GraphicResources {
 
             if (e2 > -dy) {
                 err = err - dy;
-                x1 = x1 + sx;
+                coordenadas[0] = coordenadas[0] + sx;
             }
 
             if (e2 < dx) {
                 err = err + dx;
-                y1 = y1 + sy;
+                coordenadas[2] = coordenadas[2] + sy;
             }
         }
     }
 
     // Rectangulo
-    public void rectangle(int x1, int y1, int x2, int y2, Color color, boolean fill) {
+    public void rectangulo(int x1, int y1, int x2, int y2, Color color, boolean fill) {
         linea(x1, y1, x2, y1, color);
         linea(x2, y1, x2, y2, color);
         linea(x2, y2, x1, y2, color);
         linea(x1, y2, x1, y1, color);
 
         if (fill) {
+            x1 += centerX;
+            x2 += centerX;
+            y1 = -y1;
+            y2 = -y2;
+            y1 += centerY;
+            y2 += centerY;
+
             this.fill.floodFill((x1 + x2) / 2, (y1 + y2) / 2, pixel.getPixelColor((x1 + x2) / 2, (y1 + y2) / 2), color);
         }
     }
 
-    // Método para dibujar un cubo en proyección paralela en el centro de la pantalla
-    public void drawCube(int centerX, int centerY, int size, Color color) {
-        // Calculamos las coordenadas de los vértices del cubo
-        int x1 = centerX - size / 2;
-        int y1 = centerY - size / 2;
-        int x2 = centerX + size / 2;
-        int y2 = centerY + size / 2;
+    // Poligono
+    public void poligono(int[] x, int[] y, Color color, boolean fill) {
+        for (int i = 0; i < x.length - 1; i++) {
+            linea(x[i], y[i], x[i + 1], y[i + 1], color);
+        }
 
-        // Dibujamos las caras del cubo
-        rectangle(x1, y1, x2, y2, color, false);
+        linea(x[x.length - 1], y[y.length - 1], x[0], y[0], color);
 
-        // Dibujamos las aristas del cubo
-        linea(x1, y1, x1, y1 + size, color); // Arista trasera izquierda
-        linea(x2, y1, x2, y1 + size, color); // Arista trasera derecha
-        linea(x1, y1, x2, y1, color); // Arista superior
-        linea(x1, y2, x2, y2, color); // Arista inferior
-        linea(x1, y1 + size, x2, y2 + size, color); // Arista delantera izquierda
-        linea(x2, y1 + size, x1, y2 + size, color); // Arista delantera derecha
+        if (fill) {
+            int[] xPoints = new int[x.length];
+            int[] yPoints = new int[y.length];
+
+            for (int i = 0; i < x.length; i++) {
+                xPoints[i] = x[i] + centerX;
+                yPoints[i] = -y[i] + centerY;
+            }
+
+            this.fill.floodPolygon(xPoints, yPoints, pixel.getPixelColor(x[0] + centerX, -y[0] + centerY), color);
+        }
+    }
+
+    // Cubo
+    public void cubo(int[][] coordenadas, Color color) {
+        int[][] edges = {
+                // Conexiones de la cara frontal
+                {0, 1}, {1, 2}, {2, 3}, {3, 0},
+                // Conexiones de la cara trasera
+                {4, 5}, {5, 6}, {6, 7}, {7, 4},
+                // Conexiones entre caras frontal y trasera
+                {0, 4}, {1, 5}, {2, 6}, {3, 7}
+        };
+
+        dibujar3D(edges, coordenadas, color);
+    }
+
+    public void poligono3D(int[][] coordenadas, Color color) {
+        int aristas = coordenadas.length;
+        int[][] conexionesVertices = new int[((aristas/2)*3)][2];
+
+        // Conexión cara frontal
+        for(int i = 0; i < aristas/2; i++){
+            if(i == aristas/2 - 1){
+                conexionesVertices[i][0] = i;
+                conexionesVertices[i][1] = 0;
+            } else {
+                conexionesVertices[i][0] = i;
+                conexionesVertices[i][1] = (i + 1);
+            }
+        }
+
+        // Conexión cara trasera
+        for(int i = aristas/2; i < aristas; i++){
+            if(i == aristas - 1){
+                conexionesVertices[i][0] = i;
+                conexionesVertices[i][1] = aristas/2;
+            } else {
+                conexionesVertices[i][0] = i;
+                conexionesVertices[i][1] = (i + 1);
+            }
+        }
+
+        // Conexión entre caras frontal y trasera
+        for(int i = aristas; i < (aristas/2)*3; i++){
+            conexionesVertices[i][0] = i - aristas;
+            conexionesVertices[i][1] = i - aristas + aristas/2;
+        }
+
+        dibujar3D(conexionesVertices, coordenadas, color);
+    }
+
+    private int[] centroCartesiano(int x1, int x2, int y1, int y2){
+        x1 += centerX;
+        x2 += centerX;
+        y1 = -y1;
+        y2 = -y2;
+        y1 += centerY;
+        y2 += centerY;
+
+        return new int[]{x1, x2, y1, y2};
+    }
+
+    private void dibujar3D(int[][] conexionesVertices, int[][] coordenadas, Color color){
+        for (int[] vertices : conexionesVertices) {
+            int start = vertices[0];
+            int end = vertices[1];
+
+            int[] start2D = proyection.oblicua(coordenadas[start][0], coordenadas[start][1], coordenadas[start][2]);
+            int[] end2D = proyection.oblicua(coordenadas[end][0], coordenadas[end][1], coordenadas[end][2]);
+
+            int x1 = start2D[0];
+            int y1 = start2D[1];
+            int x2 = end2D[0];
+            int y2 = end2D[1];
+
+            linea(x1, y1, x2, y2, color);
+        }
     }
 }
 

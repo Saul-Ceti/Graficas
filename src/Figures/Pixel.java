@@ -18,6 +18,11 @@ public class Pixel extends JFrame {
         canvas.setColor(Color.WHITE);
         canvas.fillRect(0, 0, 800, 800);
         setVisible(true);
+
+        //Dibujar un plano cartesiano en la ventana
+        canvas.setColor(Color.BLACK);
+        canvas.drawLine(400, 0, 400, 800);
+        canvas.drawLine(0, 400, 800, 400);
     }
 
     public void putPixel(int x, int y, Color color) {
