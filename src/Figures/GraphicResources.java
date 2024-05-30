@@ -91,20 +91,6 @@ public class GraphicResources {
         }
     }
 
-    // Cubo
-    public void cubo(int[][] coordenadas, Color color) {
-        int[][] edges = {
-                // Conexiones de la cara frontal
-                {0, 1}, {1, 2}, {2, 3}, {3, 0},
-                // Conexiones de la cara trasera
-                {4, 5}, {5, 6}, {6, 7}, {7, 4},
-                // Conexiones entre caras frontal y trasera
-                {0, 4}, {1, 5}, {2, 6}, {3, 7}
-        };
-
-        dibujar3D(edges, coordenadas, color);
-    }
-
     public void poligono3D(int[][] coordenadas, Color color) {
         int aristas = coordenadas.length;
         int[][] conexionesVertices = new int[((aristas/2)*3)][2];
@@ -152,12 +138,14 @@ public class GraphicResources {
     }
 
     private void dibujar3D(int[][] conexionesVertices, int[][] coordenadas, Color color){
+        int[] puntoDeVista = {10, 60, 20};
+
         for (int[] vertices : conexionesVertices) {
             int start = vertices[0];
             int end = vertices[1];
 
-            int[] start2D = proyection.oblicua(coordenadas[start][0], coordenadas[start][1], coordenadas[start][2]);
-            int[] end2D = proyection.oblicua(coordenadas[end][0], coordenadas[end][1], coordenadas[end][2]);
+            int[] start2D = proyection.perspectiva(coordenadas[start][0], coordenadas[start][1], coordenadas[start][2], puntoDeVista);
+            int[] end2D = proyection.perspectiva(coordenadas[end][0], coordenadas[end][1], coordenadas[end][2], puntoDeVista);
 
             int x1 = start2D[0];
             int y1 = start2D[1];

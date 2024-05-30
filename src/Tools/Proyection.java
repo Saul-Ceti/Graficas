@@ -1,7 +1,7 @@
 package Tools;
 
 public class Proyection {
-    public int[] paralela(int x, int y, int z) {
+    public int[] plana(int x, int y, int z) {
         return new int[]{x, y};
     }
 
@@ -15,7 +15,10 @@ public class Proyection {
         return new int[]{xProyectado, yProyectado};
     }
 
-    public int[] ortogonal(int x, int y, int z) {
-        return new int[]{x, y};
+    public int[] perspectiva(int x, int y, int z, int[] puntoDeVista) {
+        int xProyectado = puntoDeVista[0] + (x - puntoDeVista[0]) * (-(puntoDeVista[2])) / (z - puntoDeVista[2]);
+        int yProyectado = puntoDeVista[1] + (y - puntoDeVista[1]) * (-(puntoDeVista[2])) / (z - puntoDeVista[2]);
+
+        return new int[]{xProyectado, yProyectado};
     }
 }

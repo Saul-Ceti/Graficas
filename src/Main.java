@@ -10,9 +10,7 @@ public class Main {
         GraphicResources resources = new GraphicResources(pixel);
         Proyection paralelProyection = new Proyection();
 
-        // Dibujar un cubo, esté será con proyección paralela
-        int[][] coordenadasCubo = {
-                // Forma (x, y, z)
+        int[][] coordenadasCuboParalelo = {
                 // Cara frontal del cubo
                 {0, 0, 0},
                 {50, 0, 0},
